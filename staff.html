@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard | Lancaster University Ghana Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="staff.css">
+
+  </head>
+  <body>
+
+    <header class="hero">
+      <div class="hero-inner">
+      <div class="wordmark">
+      <img src="lancaster.png" alt="lancaster logo"  class="wordmark-badge">
+      <div class="wordmark-text">Lancaster University<span>Ghana — Library Portal</span></div>
+      </div>
+        <h1>Staff Dashboard</h1>
+        <p>Reservations and loans made by students through the catalog.</p>
+      </div>
+    </header>
+
+  <main>
+  <div class="tab-bar">
+    <button type="button" class="active" data-tab="loans">Loans &amp; Reservations</button>
+    <button type="button" data-tab="addBook">Add a Book</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-loans">
+    <div class="filter-bar">
+      <button type="button" class="active" data-filter="all">All</button>
+      <button type="button" data-filter="active">Active</button>
+      <button type="button" data-filter="overdue">Overdue</button>
+      <button type="button" data-filter="returned">Returned</button>
+    </div>
+
+    <table class="loans-table">
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Student</th>
+          <th>Loan date</th>
+          <th>Due date</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="loansBody"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-panel" id="tab-addBook">
+    <form class="add-book-form" id="addBookForm">
+      <label for="bTitle">Title</label>
+      <input type="text" id="bTitle" required>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="bAuthorFirst">Author — first name</label>
+          <input type="text" id="bAuthorFirst" required>
+        </div>
+        <div class="field">
+          <label for="bAuthorLast">Author — last name</label>
+          <input type="text" id="bAuthorLast" required>
+        </div>
+      </div>
+
+      <label for="bCategory">Category</label>
+      <input type="text" id="bCategory" list="categoryOptions" placeholder="e.g. Fiction, Computer Science…" required>
+      <datalist id="categoryOptions"></datalist>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="bBranch">Branch</label>
+          <select id="bBranch" required></select>
+        </div>
+        <div class="field">
+          <label for="bCopies">Total copies</label>
+          <input type="number" id="bCopies" min="1" value="1" required>
+        </div>
+      </div>
+
+      <button type="submit" id="addBookSubmit">Add book to catalog</button>
+      <p class="form-message" id="addBookMessage"></p>
+    </form>
+  </div>
+  </main>
+
+<footer>
+  Library Information Systems Project data served from <code>/api/staff_loans.php</code>
+</footer>
+
+<script>
+  const DEMO_LOANS = [
+    { loan_id: 1, title: "Things Fall Apart", student_name: "Ama Owusu", email: "ama.owusu@lancaster.edu.gh", loan_date: "2026-07-20", due_date: "2026-08-03", return_date: null, status: "overdue" },
+    { loan_id: 2, title: "Management Information Systems", student_name: "Kwame Boateng", email: "kwame.boateng@lancaster.edu.gh", loan_date: "2026-07-15", due_date: "2026-07-29", return_date: "2026-07-27", status: "returned" },
+  ];
+
+  const tbody = document.getElementById('loansBody');
+  const filterButtons = document.querySelectorAll('.filter-bar button');
+  let allLoans = [];
+  let currentFilter = 'all';
+
+  async function loadLoans() {
+    try {
+      const res = await fetch('api/staff_loans.php');
+      if (!res.ok) throw new Error('API not reachable');
+      allLoans = await res.json();
+    } catch (err) {
+      allLoans = DEMO_LOANS;
+    }
+    render();
+  }
+
+  function render() {
+    const loans = currentFilter === 'all'
+      ? allLoans
+      : allLoans.filter(l => l.status === currentFilter);
+
+    tbody.innerHTML = '';
+
+    if (loans.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No records in this view.</td></tr>`;
+      return;
+    }
+
+    loans.forEach(loan => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="book-cell">${escapeHTML(loan.title)}</td>
+        <td class="student-cell">${escapeHTML(loan.student_name)}<span class="email">${escapeHTML(loan.email)}</span></td>
+        <td>${escapeHTML(loan.loan_date)}</td>
+        <td>${escapeHTML(loan.due_date)}</td>
+        <td><span class="status-tag ${loan.status}">${loan.status}</span></td>
+        <td>
+          <button type="button" class="return-btn" data-loan-id="${loan.loan_id}" ${loan.status === 'returned' ? 'disabled' : ''}>
+            ${loan.status === 'returned' ? 'Returned' : 'Mark returned'}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    tbody.querySelectorAll('.return-btn:not(:disabled)').forEach(btn => {
+      btn.addEventListener('click', () => markReturned(btn.dataset.loanId));
+    });
+  }
+
+  async function markReturned(loanId) {
+    try {
+      const res = await fetch('api/return.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ loan_id: Number(loanId) })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not update loan.');
+
+      const loan = allLoans.find(l => l.loan_id === Number(loanId));
+      if (loan) {
+        loan.return_date = data.return_date;
+        loan.status = 'returned';
+      }
+      render();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  loadLoans();
+
+  const tabButtons = document.querySelectorAll('.tab-bar button');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+    });
+  });
+
+
+  const categoryOptions = document.getElementById('categoryOptions');
+  const branchSelect = document.getElementById('bBranch');
+  const addBookForm = document.getElementById('addBookForm');
+  const addBookMessage = document.getElementById('addBookMessage');
+  const addBookSubmit = document.getElementById('addBookSubmit');
+
+  async function loadCategoriesAndBranches() {
+    try {
+      const res = await fetch('api/categories.php');
+      const categories = await res.json();
+      categoryOptions.innerHTML = categories.map(c => `<option value="${escapeHTML(c.name)}">`).join('');
+    } catch (err) {
+      
+    }
+
+    try {
+      const res = await fetch('api/branches.php');
+      const branches = await res.json();
+      if (branches.length > 0) {
+        branchSelect.innerHTML = branches.map(b => `<option value="${b.branch_id}">${escapeHTML(b.name)}</option>`).join('');
+      } else {
+        throw new Error('no branches');
+      }
+    } catch (err) {
+      branchSelect.innerHTML = `<option value="1">Lancaster University Ghana Library</option>`;
+    }
+  }
+
+  addBookForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    addBookSubmit.disabled = true;
+    addBookMessage.textContent = '';
+    addBookMessage.className = 'form-message';
+
+    const payload = {
+      title: document.getElementById('bTitle').value.trim(),
+      author_first_name: document.getElementById('bAuthorFirst').value.trim(),
+      author_last_name: document.getElementById('bAuthorLast').value.trim(),
+      Subject: document.getElementById('bSubject').value.trim(),
+      branch_id: Number(branchSelect.value),
+      total_copies: Number(document.getElementById('bCopies').value),
+    };
+
+    try {
+      const res = await fetch('api/add_book.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not add book.');
+
+      addBookMessage.textContent = `"${payload.title}" was added to the catalog.`;
+      addBookMessage.className = 'form-message success';
+      addBookForm.reset();
+      document.getElementById('bCopies').value = 1;
+      loadCategoriesAndBranches();
+    } catch (err) {
+      addBookMessage.textContent = err.message;
+      addBookMessage.className = 'form-message error';
+    } finally {
+      addBookSubmit.disabled = false;
+    }
+  });
+
+  loadCategoriesAndBranches();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Catalog | Lancaster University Ghana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="wordmark">
+      <div class="wordmark-badge">LU</div>
+      <div class="wordmark-text">Lancaster University<span>Ghana — Library Portal</span></div>
+    </div>
+    <h1>Find a Book</h1>
+    <form class="hero-search" id="searchForm">
+      <input type="text" id="searchInput" placeholder="Search by title, author, or category…" autocomplete="off">
+      <select id="searchFilter">
+        <option value="all">All fields</option>
+        <option value="title">Title</option>
+        <option value="author">Author</option>
+        <option value="category">Category</option>
+      </select>
+      <button type="submit">Search</button>
+    </form>
+    <div class="hero-links">
+      <a href="#">Browse by category ›</a>
+      <a href="#">View my loans ›</a>
+    </div>
+  </div>
+</header>
+
+<div class="stats-strip" id="statsStrip">
+  <div class="stat-card">
+    <div class="stat-number" id="statTotal">—</div>
+    <div class="stat-label">Titles in the catalog</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" id="statAvailable">—</div>
+    <div class="stat-label">Titles available now</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">Accra</div>
+    <div class="stat-label">Lancaster University Ghana Library</div>
+  </div>
+</div>
+
+<main>
+  <h2 class="section-heading">Catalog</h2>
+  <table class="catalog-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th class="branch-cell">Branch</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="catalog"></tbody>
+  </table>
+</main>
+
+<footer>
+  Library Information Systems Project — data served from <code>/api/books.php</code> · <a href="staff.html">Staff dashboard</a>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h3>Reserve this book</h3>
+    <p class="modal-subtitle" id="modalBookTitle"></p>
+    <form id="reserveForm">
+      <label for="rFirstName">First name</label>
+      <input type="text" id="rFirstName" required>
+      <label for="rLastName">Last name</label>
+      <input type="text" id="rLastName" required>
+      <label for="rEmail">Email</label>
+      <input type="email" id="rEmail" required>
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel" id="modalCancel">Cancel</button>
+        <button type="submit" class="modal-submit" id="modalSubmit">Confirm reservation</button>
+      </div>
+      <p class="modal-message" id="modalMessage"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  const DEMO_BOOKS = [
+    { book_id: 1, title: "Things Fall Apart", author: "Chinua Achebe", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 2, available: 1 },
+    { book_id: 2, title: "Management Information Systems", author: "Kenneth Laudon", category: "Information Systems", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 4, available: 1 },
+
+    { book_id: 3, title: "Half of a Yellow Sun", author: "Chimamanda Ngozi Adichie", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 4, title: "Purple Hibiscus", author: "Chimamanda Ngozi Adichie", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 5, title: "The Famished Road", author: "Ben Okri", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 6, title: "Americanah", author: "Chimamanda Ngozi Adichie", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 7, title: "No Longer at Ease", author: "Chinua Achebe", category: "Fiction", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+
+    { book_id: 8, title: "Introduction to Algorithms", author: "Thomas Cormen", category: "Computer Science", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 9, title: "Clean Code", author: "Robert Martin", category: "Computer Science", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 10, title: "Structure and Interpretation of Computer Programs", author: "Harold Abelson", category: "Computer Science", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 11, title: "Database System Concepts", author: "Abraham Silberschatz", category: "Computer Science", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 12, title: "Computer Networking: A Top-Down Approach", author: "James Kurose", category: "Computer Science", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+
+    { book_id: 13, title: "Introduction to Business Law", author: "Jane Mallor", category: "Law", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 14, title: "Contract Law", author: "Ewan McKendrick", category: "Law", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 15, title: "Constitutional and Administrative Law", author: "Neil Parpworth", category: "Law", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 16, title: "International Law", author: "Malcolm Shaw", category: "Law", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 17, title: "Company Law", author: "Alan Dignam", category: "Law", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+
+    { book_id: 18, title: "Financial Accounting", author: "Jerry Weygandt", category: "Accounting and Finance", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 19, title: "Principles of Corporate Finance", author: "Richard Brealey", category: "Accounting and Finance", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 20, title: "Management Accounting", author: "Anthony Atkinson", category: "Accounting and Finance", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 21, title: "Financial Statement Analysis", author: "Martin Fridson", category: "Accounting and Finance", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 22, title: "Cost Accounting", author: "Charles Horngren", category: "Accounting and Finance", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+
+    { book_id: 23, title: "Principles of Management", author: "Ricky Griffin", category: "Business Management", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 24, title: "Good to Great", author: "Jim Collins", category: "Business Management", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 25, title: "The Practice of Management", author: "Peter Drucker", category: "Business Management", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 26, title: "Competitive Strategy", author: "Michael Porter", category: "Business Management", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 27, title: "Organizational Behavior", author: "Stephen Robbins", category: "Business Management", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+
+    { book_id: 28, title: "Marketing Management", author: "Philip Kotler", category: "Marketing", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 29, title: "Principles of Marketing", author: "Gary Armstrong", category: "Marketing", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 30, title: "Contagious: Why Things Catch On", author: "Jonah Berger", category: "Marketing", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 31, title: "Positioning: The Battle for Your Mind", author: "Al Ries", category: "Marketing", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 32, title: "Influence: The Psychology of Persuasion", author: "Robert Cialdini", category: "Marketing", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+
+    { book_id: 33, title: "Economics", author: "Paul Samuelson", category: "Economics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 34, title: "The Wealth of Nations", author: "Adam Smith", category: "Economics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 35, title: "International Economics", author: "Paul Krugman", category: "Economics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 36, title: "Freakonomics", author: "Steven Levitt", category: "Economics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 5, available_copies: 5, available: 1 },
+    { book_id: 37, title: "Globalization and Its Discontents", author: "Joseph Stiglitz", category: "Economics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+
+    { book_id: 38, title: "Politics Among Nations", author: "Hans Morgenthau", category: "Politics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 39, title: "The Prince", author: "Niccolo Machiavelli", category: "Politics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 4, available_copies: 4, available: 1 },
+    { book_id: 40, title: "Diplomacy", author: "Henry Kissinger", category: "Politics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+    { book_id: 41, title: "World Order", author: "Henry Kissinger", category: "Politics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 2, available_copies: 2, available: 1 },
+    { book_id: 42, title: "Political Ideologies", author: "Andrew Heywood", category: "Politics and International Relations", branch: "Lancaster University Ghana Library", total_copies: 3, available_copies: 3, available: 1 },
+  ];
+
+  const catalogEl = document.getElementById('catalog');
+  const searchForm = document.getElementById('searchForm');
+  const searchInput = document.getElementById('searchInput');
+  const searchFilter = document.getElementById('searchFilter');
+  const statTotal = document.getElementById('statTotal');
+  const statAvailable = document.getElementById('statAvailable');
+
+  let allBooks = [];
+
+  async function loadBooks() {
+    try {
+      const res = await fetch('api/books.php');
+      if (!res.ok) throw new Error('API not reachable');
+      allBooks = await res.json();
+    } catch (err) {
+      allBooks = DEMO_BOOKS;
+    }
+    updateStats(allBooks);
+    render(allBooks);
+  }
+
+  function updateStats(books) {
+    statTotal.textContent = books.length;
+    const availableCount = books.filter(b => Number(b.available_copies ?? b.available) > 0).length;
+    statAvailable.textContent = availableCount;
+  }
+
+  function render(books) {
+    catalogEl.innerHTML = '';
+
+    if (!books || books.length === 0) {
+      catalogEl.innerHTML = `
+        <tr><td colspan="6" class="empty-state">
+          <strong>No results.</strong> Try a different title, author, or category.
+        </td></tr>`;
+      return;
+    }
+
+    books.forEach((book, i) => {
+      const row = document.createElement('tr');
+      row.style.animationDelay = `${Math.min(i * 0.03, 0.3)}s`;
+
+      const isAvailable = Number(book.available_copies ?? book.available) > 0;
+      const copiesLabel = book.available_copies !== undefined
+        ? `${book.available_copies} of ${book.total_copies} in`
+        : (isAvailable ? 'Available' : 'Checked out');
+
+      row.innerHTML = `
+        <td class="title-cell">${escapeHTML(book.title)}</td>
+        <td class="author-cell">${escapeHTML(book.author)}</td>
+        <td><span class="category-tag">${escapeHTML(book.category || 'Uncategorized')}</span></td>
+        <td class="branch-cell">${escapeHTML(book.branch || '—')}</td>
+        <td><span class="status ${isAvailable ? 'available' : 'checked-out'}">${copiesLabel}</span></td>
+        <td><button type="button" class="reserve-btn" data-book-id="${book.book_id}" data-book-title="${escapeHTML(book.title)}" ${isAvailable ? '' : 'disabled'}>Reserve</button></td>
+      `;
+      catalogEl.appendChild(row);
+    });
+  }
+
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = searchInput.value.trim().toLowerCase();
+    const field = searchFilter.value;
+
+    if (!query) {
+      render(allBooks);
+      return;
+    }
+
+    const filtered = allBooks.filter(book => {
+      if (field === 'title') return book.title.toLowerCase().includes(query);
+      if (field === 'author') return book.author.toLowerCase().includes(query);
+      if (field === 'category') return (book.category || '').toLowerCase().includes(query);
+      return (
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query) ||
+        (book.category || '').toLowerCase().includes(query)
+      );
+    });
+
+    render(filtered);
+  });
+
+  // ===== Reservation modal =====
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalBookTitle = document.getElementById('modalBookTitle');
+  const modalMessage = document.getElementById('modalMessage');
+  const modalSubmit = document.getElementById('modalSubmit');
+  const reserveForm = document.getElementById('reserveForm');
+  let selectedBookId = null;
+
+  catalogEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.reserve-btn');
+    if (!btn || btn.disabled) return;
+    selectedBookId = btn.dataset.bookId;
+    modalBookTitle.textContent = btn.dataset.bookTitle;
+    modalMessage.textContent = '';
+    modalMessage.className = 'modal-message';
+    reserveForm.reset();
+    modalOverlay.classList.add('open');
+  });
+
+  document.getElementById('modalCancel').addEventListener('click', () => {
+    modalOverlay.classList.remove('open');
+  });
+
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+  });
+
+  reserveForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    modalSubmit.disabled = true;
+    modalMessage.textContent = '';
+    modalMessage.className = 'modal-message';
+
+    const payload = {
+      book_id: Number(selectedBookId),
+      first_name: document.getElementById('rFirstName').value.trim(),
+      last_name: document.getElementById('rLastName').value.trim(),
+      email: document.getElementById('rEmail').value.trim(),
+    };
+
+    try {
+      const res = await fetch('api/reserve.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+
+      modalMessage.textContent = `Reserved! Due back ${data.due_date}.`;
+      modalMessage.className = 'modal-message success';
+      await loadBooks();
+      setTimeout(() => modalOverlay.classList.remove('open'), 1200);
+    } catch (err) {
+      modalMessage.textContent = err.message;
+      modalMessage.className = 'modal-message error';
+    } finally {
+      modalSubmit.disabled = false;
+    }
+  });
+
+  loadBooks();
+</script>
+
+</body>
+</html>

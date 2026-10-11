@@ -1,0 +1,279 @@
+ :root {
+    --lu-red: #A6192E;
+    --white: #FFFFFF;
+    --paper: #F4F3F1;
+    --line: #E1DFDB;
+    --text: #2A2A2A;
+    --text-muted: #6B6B6B;
+    --gold: #C08A2E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--white);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  .hero {
+    background: var(--lu-red);
+    padding: 3rem 2.5rem 2.5rem;
+  }
+
+  .hero-inner { max-width: 1100px; }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .wordmark-badge {
+    width: 150px;
+    height: 120px;
+    border-radius: 3px;
+    background: var(--white);
+    color: var(--lu-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .wordmark-text {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--white);
+  }
+
+  .wordmark-text span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    font-family: 'Inter', sans-serif;
+    margin-top: 0.15rem;
+  }
+
+  .hero h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 2.4rem;
+    color: var(--white);
+  }
+
+  .hero p {
+    color: rgba(255,255,255,0.85);
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem 4rem;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar button {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.5rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .filter-bar button.active {
+    background: var(--lu-red);
+    border-color: var(--lu-red);
+    color: var(--white);
+  }
+
+  .loans-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .loans-table thead th {
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 0.75rem 0.6rem;
+    border-bottom: 2px solid var(--lu-red);
+  }
+
+  .loans-table tbody tr {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .loans-table tbody tr:hover { background: var(--paper); }
+
+  .loans-table td {
+    padding: 0.8rem 0.75rem;
+    vertical-align: middle;
+  }
+
+  .book-cell {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+  }
+
+  .student-cell .email {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .status-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .status-tag.active   { background: #EAF2E9; color: #3D7A3F; }
+  .status-tag.overdue  { background: #FBEAEC; color: var(--lu-red); }
+  .status-tag.returned { background: var(--paper); color: var(--text-muted); }
+
+  .return-btn {
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--lu-red);
+    cursor: pointer;
+  }
+
+  .return-btn:disabled { color: var(--text-muted); cursor: default; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+  }
+
+  footer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding: 1.75rem;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 700px) {
+    .hero, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .student-cell .email { display: none; }
+  }
+
+  /* ===== Tabs ===== */
+  .tab-bar {
+    display: flex;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1.75rem;
+  }
+
+  .tab-bar button {
+    background: none;
+    border: none;
+    padding: 0.75rem 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .tab-bar button.active {
+    color: var(--text);
+    border-bottom-color: var(--lu-red);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ===== Add Book form ===== */
+  .add-book-form {
+    max-width: 480px;
+  }
+
+  .add-book-form .form-row {
+    display: flex;
+    gap: 0.9rem;
+  }
+
+  .add-book-form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    margin-top: 1rem;
+  }
+
+  .add-book-form input,
+  .add-book-form select {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.6rem 0.7rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    background: var(--white);
+  }
+
+  .add-book-form input:focus,
+  .add-book-form select:focus { border-color: var(--lu-red); }
+
+  .add-book-form .field { flex: 1; }
+
+  .add-book-form button[type="submit"] {
+    margin-top: 1.5rem;
+    background: var(--lu-red);
+    color: var(--white);
+    border: none;
+    border-radius: 3px;
+    padding: 0.7rem 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .add-book-form button[type="submit"]:hover { background: #7E1223; }
+  .add-book-form button[type="submit"]:disabled { opacity: 0.6; cursor: default; }
+
+  .form-message {
+    font-size: 0.85rem;
+    margin-top: 0.9rem;
+  }
+
+  .form-message.error { color: var(--lu-red); }
+  .form-message.success { color: #3D7A3F; }

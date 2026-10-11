@@ -1,0 +1,384 @@
+  :root {
+    --lu-red: #A6192E;
+    --lu-red-dark: #7E1223;
+    --white: #FFFFFF;
+    --paper: #F4F3F1;
+    --line: #E1DFDB;
+    --text: #2A2A2A;
+    --text-muted: #6B6B6B;
+    --gold: #C08A2E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--white);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  
+  .hero {
+    background: var(--lu-red);
+    padding: 3rem 2.5rem 4rem;
+  }
+
+  .hero-inner { max-width: 1000px; }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .wordmark-badge {
+    width: 140px;
+    height: 120px;
+    border-radius: 3px;
+    background: var(--white);
+    color: var(--lu-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .wordmark-text {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.05;
+    color: var(--white);
+  }
+
+  .wordmark-text span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    font-family: 'Inter', sans-serif;
+    margin-top: 0.15rem;
+  }
+
+  .hero h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 3rem;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-search {
+    background: var(--white);
+    border-radius: 4px;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.4rem;
+    max-width: 720px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+  }
+
+  .hero-search input[type="text"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+  }
+
+  .hero-search select {
+    border: none;
+    border-left: 1px solid var(--line);
+    outline: none;
+    padding: 0.75rem 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: var(--white);
+  }
+
+  .hero-search button {
+    background: var(--text);
+    color: var(--white);
+    border: none;
+    border-radius: 3px;
+    padding: 0 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .hero-search button:hover { background: #1a1a1a; }
+
+  .hero-links {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-links a {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+
+  .stats-strip {
+    display: flex;
+    gap: 1px;
+    background: var(--line);
+    margin: 0 2.5rem;
+    transform: translateY(-1.75rem);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--white);
+    flex: 1;
+    min-width: 200px;
+    padding: 1.5rem 1.75rem;
+    border-top: 3px solid var(--gold);
+  }
+
+  .stat-card .stat-number {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--lu-red);
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+ 
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 2.5rem 4rem;
+  }
+
+  .section-heading {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .results-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .catalog-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  .catalog-table thead th {
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 0.75rem 0.6rem;
+    border-bottom: 2px solid var(--lu-red);
+  }
+
+  .catalog-table tbody tr {
+    border-bottom: 1px solid var(--line);
+    animation: rise 0.3s ease backwards;
+  }
+
+  .catalog-table tbody tr:hover { background: var(--paper); }
+
+  .catalog-table td {
+    padding: 0.85rem 0.75rem;
+    vertical-align: middle;
+  }
+
+  .catalog-table .title-cell {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .catalog-table .author-cell,
+  .catalog-table .branch-cell { color: var(--text-muted); }
+
+  .category-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--lu-red);
+    background: #FBEAEC;
+    padding: 0.18rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.55rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .status.available { background: #EAF2E9; color: #3D7A3F; }
+  .status.checked-out { background: #F3E7D5; color: var(--gold); }
+
+  .catalog-table .reserve-btn {
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--lu-red);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .catalog-table .reserve-btn:disabled { color: var(--text-muted); cursor: not-allowed; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .catalog-table tbody tr { animation: none; }
+  }
+
+  @media (max-width: 700px) {
+    .catalog-table .branch-cell { display: none; }
+  }
+
+  footer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding: 1.75rem;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 700px) {
+    .utility-bar, .main-nav, .hero, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .hero h1 { font-size: 2.1rem; }
+    .stats-strip { margin: 0 1.25rem; transform: none; }
+  }
+
+  /* Reservation's css*/
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 20, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 100;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--white);
+    border-radius: 5px;
+    max-width: 380px;
+    width: 100%;
+    padding: 1.75rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+
+  .modal-box h3 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .modal-box .modal-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-box label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    margin-top: 0.9rem;
+  }
+
+  .modal-box input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.6rem 0.7rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .modal-box input:focus { border-color: var(--lu-red); }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 3px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: none;
+  }
+
+  .modal-cancel { background: var(--paper); color: var(--text); }
+  .modal-submit { background: var(--lu-red); color: var(--white); }
+  .modal-submit:hover { background: var(--lu-red-dark); }
+  .modal-submit:disabled { opacity: 0.6; cursor: default; }
+
+  .modal-message {
+    font-size: 0.82rem;
+    margin-top: 0.75rem;
+  }
+
+  .modal-message.error { color: var(--lu-red); }
+  .modal-message.success { color: #3D7A3F; }
